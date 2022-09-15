@@ -31,7 +31,7 @@ import org.camunda.bpm.engine.impl.util.CollectionUtil;
 
 /**
  * Container for task definition information gathered at parsing time.
- *
+ * 解析时收集的任务定义信息的容器。
  * @author Joram Barrez
  */
 

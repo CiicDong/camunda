@@ -36,6 +36,11 @@ public class PvmAtomicOperationActivityExecute implements PvmAtomicOperation {
     return false;
   }
 
+  /**
+   * 该原子操作的作用实际上就是取出该执行实例当前的活动节点，并且执行该活动节点的行为定义。
+   * 行为定义通过接口org.activiti.engine.impl.pvm.delegate.ActivityBehavior定义。不同的节点行为由不同的子类完成
+   * @param execution
+   */
   public void execute(PvmExecutionImpl execution) {
     execution.activityInstanceStarted();
 

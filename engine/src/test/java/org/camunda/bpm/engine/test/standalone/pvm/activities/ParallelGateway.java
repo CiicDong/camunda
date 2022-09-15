@@ -33,19 +33,22 @@ public class ParallelGateway implements ActivityBehavior {
 private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
 
   public void execute(ActivityExecution execution) {
+    //获取当前要执行的节点
     PvmActivity activity = execution.getActivity();
-
+    //获取所有传出序列流列表
     List<PvmTransition> outgoingTransitions = execution.getActivity().getOutgoingTransitions();
-
+    //停用此执行。例如，这在连接中很有用：执行仍然存在，但不再处于活动状态(猜测可能是先更改执行的状态)
     execution.inactivate();
-
+    //查询在此执行下所有的并发非活动状态的执行实例
     List<ActivityExecution> joinedExecutions = execution.findInactiveConcurrentExecutions(activity);
-
+    //查询输入的流数量
     int nbrOfExecutionsToJoin = execution.getActivity().getIncomingTransitions().size();
+    //查询已经完成的数量
     int nbrOfExecutionsJoined = joinedExecutions.size();
-
+    //所有的数量都走完了
     if (nbrOfExecutionsJoined==nbrOfExecutionsToJoin) {
       LOG.debug("parallel gateway '"+activity.getId()+"' activates: "+nbrOfExecutionsJoined+" of "+nbrOfExecutionsToJoin+" joined");
+
       execution.leaveActivityViaTransitions(outgoingTransitions, joinedExecutions);
 
     } else {

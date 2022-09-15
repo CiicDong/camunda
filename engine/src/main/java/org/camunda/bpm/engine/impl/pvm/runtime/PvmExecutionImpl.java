@@ -392,6 +392,10 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
    *
    * @param completeScope true if ending the execution contributes to completing the BPMN 2.0 scope
    */
+  /**
+   * pvm 虚拟机实际去结束流程执行。删除执行的作用域
+   * @param completeScope
+   */
   @Override
   public void end(boolean completeScope) {
 
@@ -976,9 +980,12 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
   @SuppressWarnings({"rawtypes", "unchecked"})
   public List<ActivityExecution> findInactiveConcurrentExecutions(PvmActivity activity) {
     List<PvmExecutionImpl> inactiveConcurrentExecutionsInActivity = new ArrayList<>();
+    //如果是并行节点，查找所有的兄弟执行实例
     if (isConcurrent()) {
       return getParent().findInactiveChildExecutions(activity);
-    } else if (!isActive()) {
+    }
+    //如果不是当前正在执行的节点，加入不活跃的activity
+    else if (!isActive()) {
       inactiveConcurrentExecutionsInActivity.add(this);
     }
 
@@ -989,8 +996,10 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
   @SuppressWarnings({"rawtypes", "unchecked"})
   public List<ActivityExecution> findInactiveChildExecutions(PvmActivity activity) {
     List<PvmExecutionImpl> inactiveConcurrentExecutionsInActivity = new ArrayList<>();
+    //获取所有的孩子执行
     List<? extends PvmExecutionImpl> concurrentExecutions = getAllChildExecutions();
     for (PvmExecutionImpl concurrentExecution : concurrentExecutions) {
+      //当执行的活动是当前活动，并且不是活跃状态
       if (concurrentExecution.getActivity() == activity && !concurrentExecution.isActive()) {
         inactiveConcurrentExecutionsInActivity.add(concurrentExecution);
       }
@@ -1027,6 +1036,7 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
     // therefore it is necessary to remove the local
     // variables (event if it is the last concurrent
     // execution).
+    //这里是判断当前的执行是否是最后一个并行流收集，如果是的话，留了个空的接口，以便于扩展
     if (recyclableExecutions.size() > 1) {
       removeVariablesLocalInternal();
     }
@@ -1040,6 +1050,7 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
     // this is a workaround to not delete all recyclable
     // executions and create a new execution which leaves
     // the activity.
+    //如果所有的要收集的流里包含当前要回收的流，则将当前执行设置为已结束
     for (ActivityExecution execution : recyclableExecutions) {
       execution.setEnded(true);
     }
@@ -1050,6 +1061,7 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
     // execution, then 'this' execution will be pruned,
     // and the activity is left with the scope
     // execution)
+    //将待收集的列表里，除去当前流
     recyclableExecutions.remove(this);
 
     // End all other executions synchronously.
@@ -1061,6 +1073,7 @@ public abstract class PvmExecutionImpl extends CoreExecution implements
     // not be guaranteed anymore. This can lead to executions
     // getting stuck in case they rely on ending the other
     // executions first.
+    //设置所有执行的状态
     for (ActivityExecution execution : recyclableExecutions) {
       execution.setIgnoreAsync(true);
       execution.end(_transitions.isEmpty());

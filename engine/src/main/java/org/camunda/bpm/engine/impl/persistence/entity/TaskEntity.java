@@ -295,7 +295,7 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
 
   @Override
   public void complete() {
-
+    //校验当前任务的状态，如果是初始化状态、已完成状态、已删除状态，抛异常
     if (TaskState.STATE_COMPLETED.equals(this.lifecycleState)
         || TaskListener.EVENTNAME_COMPLETE.equals(this.eventName)
         || TaskListener.EVENTNAME_DELETE.equals(this.eventName)) {
@@ -307,6 +307,7 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
     // associated case execution. The case
     // execution handles the completion of
     // the task.
+    //如果有关联的cmmn案例，先完成案例
     if (caseExecutionId != null) {
       getCaseExecution().manualComplete();
       return;
@@ -315,13 +316,16 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
     // in the other case:
 
     // ensure the the Task is not suspended
+    //再一次验证暂停状态的流程。
     ensureTaskActive();
 
     // trigger TaskListener.complete event
+    // 生成任务完成事件，异步调用监听器
     final boolean shouldDeleteTask = transitionTo(TaskState.STATE_COMPLETED);
 
     // shouldn't attempt to delete the task if the COMPLETE Task listener failed,
     // or managed to cancel the Process or Task Instance
+    // 如果任务完成事件发布成功
     if (shouldDeleteTask)
     {
       // delete the task
@@ -337,7 +341,9 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
       // then call signal an the associated
       // execution.
       if (executionId !=null) {
+        //获取执行实例
         ExecutionEntity execution = getExecution();
+        //删除当前的执行实例
         execution.removeTask(this);
         execution.signal(null, null);
       }
@@ -1026,13 +1032,16 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
    * @return true if invoking the listener was successful;
    *   if not successful, either false is returned (case: BPMN error propagation)
    *   or an exception is thrown
+   *   如果调用监听器成功则返回 true；如果不成功，则返回 false（案例：BPMN 错误传播）或抛出异常
    */
   public boolean fireEvent(String taskEventName) {
-
+    //获取任务的完成时间，这里通过事件的名字，获取监听器的类
     List<TaskListener> taskEventListeners = getListenersForEvent(taskEventName);
 
     if (taskEventListeners != null) {
       for (TaskListener taskListener : taskEventListeners) {
+        //调用监听器 完成对应的监听执行，所有的listener 都在 ProcessApplicationEventParseListener里
+        // complete ---> ProcessApplicationEventListenerDelegate
         if (!invokeListener(taskEventName, taskListener)){
           return false;
         }
@@ -1178,7 +1187,7 @@ public class TaskEntity extends AbstractVariableScope implements Task, DelegateT
         commandContext.getHistoricTaskInstanceManager().createHistoricTask(this);
       }
       return fireEvent(TaskListener.EVENTNAME_CREATE) && fireAssignmentEvent();
-
+      //执行完成，发布任务完成时间
     case STATE_COMPLETED:
       return fireEvent(TaskListener.EVENTNAME_COMPLETE) && TaskState.STATE_COMPLETED.equals(this.lifecycleState);
 

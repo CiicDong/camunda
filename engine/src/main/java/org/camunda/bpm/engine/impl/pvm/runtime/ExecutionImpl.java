@@ -96,6 +96,7 @@ public class ExecutionImpl extends PvmExecutionImpl implements
     // initialize sequence counter
     createdExecution.setSequenceCounter(getSequenceCounter());
 
+    // 设置父 execution
     // manage the bidirectional parent-child relation
     createdExecution.setParent(this);
 

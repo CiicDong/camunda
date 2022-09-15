@@ -43,6 +43,7 @@ public interface DmnEngine {
 
   /**
    * Parse all decisions in a DMN decision model.
+   * 解析xml里的所有决策
    *
    * @param inputStream the {@link InputStream} of the DMN file
    * @return a list of the {@link DmnDecision}s of the DMN file
@@ -149,7 +150,13 @@ public interface DmnEngine {
   /**
    * Evaluates the decision with the given key in a DMN decision model.
    * The key is the {@code id} attribute of the decision in the DMN XML file.
-   *
+   *<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+   *   <decision id="dish" name="Dish">
+   *     <decisionTable id="decisionTable">
+   *     <!-- ... -->
+   *     </decisionTable>
+   *   </decision>
+   * </definitions>
    * @param decisionKey the key of the decision to evaluated
    * @param inputStream the {@link InputStream} of the DMN file
    * @param variables the variables which are available during the evaluation

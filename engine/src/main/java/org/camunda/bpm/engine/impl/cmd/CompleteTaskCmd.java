@@ -43,6 +43,7 @@ public class CompleteTaskCmd implements Command<VariableMap>, Serializable {
 
   // only fetch variables if they are actually requested;
   // this avoids unnecessary loading of variables
+  //是否获取流程变量
   protected boolean returnVariables;
   protected boolean deserializeReturnedVariables;
 
@@ -60,13 +61,13 @@ public class CompleteTaskCmd implements Command<VariableMap>, Serializable {
 
   public VariableMap execute(CommandContext commandContext) {
     ensureNotNull("taskId", taskId);
-
+    //通过taskManage 获取 task
     TaskManager taskManager = commandContext.getTaskManager();
     TaskEntity task = taskManager.findTaskById(taskId);
     ensureNotNull("Cannot find task with id " + taskId, "task", task);
-
+    //校验任务是否可以完成
     checkCompleteTask(task, commandContext);
-
+    // 如果有流程变量值，设置进去
     if (variables != null) {
       task.setExecutionVariables(variables);
     }
@@ -96,6 +97,7 @@ public class CompleteTaskCmd implements Command<VariableMap>, Serializable {
   }
 
   protected void completeTask(TaskEntity task) {
+    //设置完成的任务状态
     task.logUserOperation(UserOperationLogEntry.OPERATION_TYPE_COMPLETE);
     task.complete();
   }

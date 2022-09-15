@@ -99,7 +99,7 @@ public interface ProcessInstantiationBuilder
    * Start the process instance. If no instantiation instructions are set then
    * the instance start at the default start activity. Otherwise, all
    * instructions are executed in the order they are submitted.
-   *
+   * 启动流程实例。如果没有设置实例化指令，则实例从默认启动活动开始。否则，所有指令都按照它们提交的顺序执行。
    * @param skipCustomListeners
    *          specifies whether custom listeners (task and execution) should be
    *          invoked when executing the instructions. Only supported for
@@ -108,6 +108,7 @@ public interface ProcessInstantiationBuilder
    *          specifies whether input/output mappings for tasks should be
    *          invoked throughout the transaction when executing the
    *          instructions. Only supported for instructions.
+   *          指定在执行指令时是否应在整个事务中调用任务的输入输出映射。仅支持指令。
    * @return the newly created process instance with the latest variables
    *
    * @throws AuthorizationException

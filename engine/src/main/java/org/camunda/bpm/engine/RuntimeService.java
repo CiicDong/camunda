@@ -68,6 +68,13 @@ import org.camunda.bpm.engine.variable.value.TypedValue;
  * @author Tom Baeyens
  * @author Joram Barrez
  * @author Daniel Meyer
+ * RepositoryService是关于静态信息的（即，不改变的数据，或者至少不会改变很多的），而RuntimeService则完全相反。它处理的是启动流程定义的新流程实例。
+ * 如上所述，一个流程定义定义了流程中不同步骤的结构和行为。
+ * 一个流程实例是这样流程定义的一次执行。对于每个流程定义，通常有许多实例在同时运行。
+ * RuntimeService也是用于检索和存储流程变量的服务。这是某个特定流程实例的数据，可以被流程中的各种构造使用（例如，排他网关经常使用流程变量来确定选择哪条路径继续流程）。
+ * RuntimeService还允许对流程实例和执行进行查询。执行（Executions）是BPMN 2.0中’token’的概念。一般来说，执行是一个指针，指向流程实例当前所在的位置。
+ * 最后，当流程实例在等待外部触发并且流程需要继续时，RuntimeService就会被使用。
+ * 流程实例可以有各种等待状态，这个服务包含各种操作，以 “通知” 实例已经收到外部触发，流程实例可以继续执行。
  */
 public interface RuntimeService {
 
@@ -1801,7 +1808,7 @@ public interface RuntimeService {
    *          if the process definition id is null
    * @throws AuthorizationException
    *          if the user has none of the following:
-   *          <li>{@link ProcessInstancePermissions#SUSPEND} permission on {@link Resources#PROCESS_INSTANCE}</li>
+   *          <li>{@link ProcessInstancePermissions#SUSPEND} pe rmission on {@link Resources#PROCESS_INSTANCE}</li>
    *          <li>{@link ProcessDefinitionPermissions#SUSPEND_INSTANCE} permission on {@link Resources#PROCESS_DEFINITION}</li>
    *          <li>{@link Permissions#UPDATE} permission on {@link Resources#PROCESS_INSTANCE}</li>
    *          <li>{@link Permissions#UPDATE_INSTANCE} permission on {@link Resources#PROCESS_DEFINITION}</li>

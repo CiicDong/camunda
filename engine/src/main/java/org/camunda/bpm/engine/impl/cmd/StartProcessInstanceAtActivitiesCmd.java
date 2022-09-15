@@ -58,10 +58,11 @@ public class StartProcessInstanceAtActivitiesCmd implements Command<ProcessInsta
   }
 
   public ProcessInstanceWithVariables execute(CommandContext commandContext) {
-
+    //获取已经部署的流程定义流程定义
     ProcessDefinitionEntity processDefinition = new GetDeployedProcessDefinitionCmd(instantiationBuilder, false).execute(commandContext);
 
     for(CommandChecker checker : commandContext.getProcessEngineConfiguration().getCommandCheckers()) {
+      //检查流程定义是否可以创建
       checker.checkCreateProcessInstance(processDefinition);
     }
 
@@ -71,10 +72,10 @@ public class StartProcessInstanceAtActivitiesCmd implements Command<ProcessInsta
 
     // instantiate the process
     ActivityImpl initialActivity = determineFirstActivity(processDefinition, modificationBuilder);
-
+    //使用流程定义初始化流程实例
     ExecutionEntity processInstance = processDefinition
         .createProcessInstance(instantiationBuilder.getBusinessKey(), instantiationBuilder.getCaseInstanceId(), initialActivity);
-
+    //设置租户号
     if (instantiationBuilder.getTenantId() != null) {
       processInstance.setTenantId(instantiationBuilder.getTenantId());
     }
@@ -83,7 +84,7 @@ public class StartProcessInstanceAtActivitiesCmd implements Command<ProcessInsta
     VariableMap variables = modificationBuilder.getProcessVariables();
 
     final ExecutionVariableSnapshotObserver variablesListener = new ExecutionVariableSnapshotObserver(processInstance);
-
+    //启动流程实例，包含流程变量信息
     processInstance.startWithoutExecuting(variables);
 
 
@@ -97,6 +98,7 @@ public class StartProcessInstanceAtActivitiesCmd implements Command<ProcessInsta
     // The documented behavior of this feature is that initial variables
     // are only set if there is a single start activity. Accordingly,
     // we reset the flag in case we have more than one start instruction.
+    // 这个没看懂
     processInstance.setStarting(instructions.size() == 1);
 
     for (int i = 0; i < instructions.size(); i++) {

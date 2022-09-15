@@ -52,7 +52,7 @@ public class GetDeployedProcessDefinitionCmd implements Command<ProcessDefinitio
   public ProcessDefinitionEntity execute(CommandContext commandContext) {
 
     ensureOnlyOneNotNull("either process definition id or key must be set", processDefinitionId, processDefinitionKey);
-
+    //获取流程定义的实体
     ProcessDefinitionEntity processDefinition = find(commandContext);
 
     if (checkReadPermission) {

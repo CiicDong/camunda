@@ -47,7 +47,15 @@ import org.camunda.bpm.engine.variable.value.TypedValue;
  * @author Tom Baeyens
  * @author Joram Barrez
  * @author Thorben Lindhauer
+ *
+ * 需要由系统的实际人类用户执行的任务是流程引擎的核心。围绕任务的一切都被归入TaskService，例如：
+ * 查询分配给用户或组的任务。
+ * 创建新的独立任务。这些是与流程实例无关的任务。
+ * 操纵一个任务被分配给哪个用户，或者哪个用户以某种方式参与到任务中。
+ * 声称并完成一项任务。声称意味着有人决定成为该任务的受让人，意味着这个用户将完成该任务。完成意味着 “完成任务的工作”。一般来说，这就是填写一个类似的表格。
  */
+
+
 public interface TaskService {
 
   /**

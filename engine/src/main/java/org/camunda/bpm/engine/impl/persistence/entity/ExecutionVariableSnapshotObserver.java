@@ -20,7 +20,7 @@ import org.camunda.bpm.engine.variable.VariableMap;
 
 /**
  * Provides access to the snapshot of latest variables of an execution.
- *
+ * 提供对执行的最新变量快照的访问
  * @author Christopher Zell <christopher.zell@camunda.com>
  */
 public class ExecutionVariableSnapshotObserver implements ExecutionObserver {

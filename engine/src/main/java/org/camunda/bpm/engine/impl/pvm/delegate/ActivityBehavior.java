@@ -18,7 +18,8 @@ package org.camunda.bpm.engine.impl.pvm.delegate;
 
 import org.camunda.bpm.engine.impl.core.delegate.CoreActivityBehavior;
 
-
+//Activiti提供了接口org.activiti.engine.impl.pvm.delegate.ActivityBehavior。该接口内部仅有一个execute方法。
+// 该接口的实现即为不同PvmActivity节点提供了具体动作。ActivityBehavior有丰富的不同实现，对应了流程中丰富的不同功能的节点。每一个PvmActivity对象都会持有一个ActivityBehavior对象。
 /**
  * @author Tom Baeyens
  */

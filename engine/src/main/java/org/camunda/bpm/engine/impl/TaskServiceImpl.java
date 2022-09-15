@@ -176,6 +176,7 @@ public class TaskServiceImpl extends ServiceImpl implements TaskService {
   }
 
   public void complete(String taskId, Map<String, Object> variables) {
+    //这里去执行CompleteTaskCmd 的 execute 方法
     commandExecutor.execute(new CompleteTaskCmd(taskId, variables, false, false));
   }
 

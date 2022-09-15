@@ -704,6 +704,19 @@ public class AuthorizationCommandChecker implements CommandChecker {
       // case it is not necessary to check any permission,
       // because such tasks can always be updated
 
+
+
+      // 如果任务在进程上下文中不存在
+      // 实例，那么它要么是 (a) 独立任务
+      // 或 (b) 它存在于案例实例的上下文中。
+
+      // (a) 独立任务：检查以下权限
+      // - TASK_WORK 或 UPDATE
+      // (b) 案例实例上下文中的任务，在此
+      // 如果不需要检查任何权限，
+      // 因为这样的任务总是可以更新的
+
+
       String caseExecutionId = task.getCaseExecutionId();
       if (caseExecutionId == null) {
         // standalone task
